@@ -1,0 +1,386 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<script data-ezscrex='false' data-cfasync='false' data-pagespeed-no-defer="">var __ez=__ez||{};__ez.stms=Date.now();__ez.evt={};__ez.script={};__ez.ck=__ez.ck||{};__ez.template={};__ez.template.isOrig=true;__ez.queue=(function(){var count=0,incr=0,items=[],timeDelayFired=false,hpItems=[],lpItems=[],allowLoad=true;var obj={func:function(name,funcName,parameters,isBlock,blockedBy,deleteWhenComplete,proceedIfError){var self=this;this.name=name;this.funcName=funcName;this.parameters=parameters===null?null:(parameters instanceof Array)?parameters:[parameters];this.isBlock=isBlock;this.blockedBy=blockedBy;this.deleteWhenComplete=deleteWhenComplete;this.isError=false;this.isComplete=false;this.isInitialized=false;this.proceedIfError=proceedIfError;this.isTimeDelay=false;this.process=function(){log("... func = "+name);self.isInitialized=true;self.isComplete=true;log("... func.apply: "+name);var funcs=self.funcName.split('.');var func=null;if(funcs.length>3){}else if(funcs.length===3){func=window[funcs[0]][funcs[1]][funcs[2]];}else if(funcs.length===2){func=window[funcs[0]][funcs[1]];}else{func=window[self.funcName];}
+if(typeof func!=='undefined'&&func!==null){func.apply(null,this.parameters);}
+if(self.deleteWhenComplete===true)delete items[name];if(self.isBlock===true){log("----- F'D: "+self.name);processAll();}}},file:function(name,path,isBlock,blockedBy,async,defer,proceedIfError){var self=this;this.name=name;this.path=path;this.async=async;this.defer=defer;this.isBlock=isBlock;this.blockedBy=blockedBy;this.isInitialized=false;this.isError=false;this.isComplete=false;this.proceedIfError=proceedIfError;this.isTimeDelay=false;this.process=function(){self.isInitialized=true;log("... file = "+name);var scr=document.createElement('script');scr.src=path;if(async===true)scr.async=true;else if(defer===true)scr.defer=true;scr.onerror=function(){log("----- ERR'D: "+self.name);self.isError=true;if(self.isBlock===true){processAll();}};scr.onreadystatechange=scr.onload=function(){var state=scr.readyState;log("----- F'D: "+self.name);if((!state||/loaded|complete/.test(state))){self.isComplete=true;if(self.isBlock===true){processAll();}}};document.getElementsByTagName('head')[0].appendChild(scr);}},fileLoaded:function(name,isComplete){this.name=name;this.path="";this.async=false;this.defer=false;this.isBlock=false;this.blockedBy=[];this.isInitialized=true;this.isError=false;this.isComplete=isComplete;this.proceedIfError=false;this.isTimeDelay=false;this.process=function(){};}};function init(){window.addEventListener("load",function(){setTimeout(function(){timeDelayFired=true;log('TDELAY -----');processAll();},5000);},false);}
+function addFile(name,path,isBlock,blockedBy,async,defer,proceedIfError,priority){var item=new obj.file(name,path,isBlock,blockedBy,async,defer,proceedIfError);if(priority===true){hpItems[name]=item}else{lpItems[name]=item}
+items[name]=item;checkIfBlocked(item);}
+function setallowLoad(settobool){allowLoad=settobool}
+function addFunc(name,func,parameters,isBlock,blockedBy,autoInc,deleteWhenComplete,proceedIfError,priority){if(autoInc===true)name=name+"_"+incr++;var item=new obj.func(name,func,parameters,isBlock,blockedBy,deleteWhenComplete,proceedIfError);if(priority===true){hpItems[name]=item}else{lpItems[name]=item}
+items[name]=item;checkIfBlocked(item);}
+function addTimeDelayFile(name,path){var item=new obj.file(name,path,false,[],false,false,true);item.isTimeDelay=true;log(name+' ... '+' FILE! TDELAY');lpItems[name]=item;items[name]=item;checkIfBlocked(item);}
+function addTimeDelayFunc(name,func,parameters){var item=new obj.func(name,func,parameters,false,[],true,true);item.isTimeDelay=true;log(name+' ... '+' FUNCTION! TDELAY');lpItems[name]=item;items[name]=item;checkIfBlocked(item);}
+function checkIfBlocked(item){if(isBlocked(item)===true||allowLoad==false)return;item.process();}
+function isBlocked(item){if(item.isTimeDelay===true&&timeDelayFired===false){log(item.name+" blocked = TIME DELAY!");return true;}
+if(item.blockedBy instanceof Array){for(var i=0;i<item.blockedBy.length;i++){var block=item.blockedBy[i];if(items.hasOwnProperty(block)===false){log(item.name+" blocked = "+block);return true;}else if(item.proceedIfError===true&&items[block].isError===true){return false;}else if(items[block].isComplete===false){log(item.name+" blocked = "+block);return true;}}}
+return false;}
+function markLoaded(filename){if(!filename||0===filename.length){return;}
+if(filename in items){var item=items[filename];if(item.isComplete===true){log(item.name+' '+filename+': error loaded duplicate')}else{item.isComplete=true;item.isInitialized=true;}}else{items[filename]=new obj.fileLoaded(filename,true);}
+log("markLoaded dummyfile: "+items[filename].name);}
+function logWhatsBlocked(){for(var i in items){if(items.hasOwnProperty(i)===false)continue;var item=items[i];isBlocked(item)}}
+function log(msg){var href=window.location.href;var reg=new RegExp('[?&]ezq=([^&#]*)','i');var string=reg.exec(href);var res=string?string[1]:null;if(res==="1")console.debug(msg);}
+function processAll(){count++;if(count>200)return;log("let's go");processItems(hpItems);processItems(lpItems);}
+function processItems(list){for(var i in list){if(list.hasOwnProperty(i)===false)continue;var item=list[i];if(item.isComplete===true||isBlocked(item)||item.isInitialized===true||item.isError===true){if(item.isError===true){log(item.name+': error')}else if(item.isComplete===true){log(item.name+': complete already')}else if(item.isInitialized===true){log(item.name+': initialized already')}}else{item.process();}}}
+init();return{addFile:addFile,addDelayFile:addTimeDelayFile,addFunc:addFunc,addDelayFunc:addTimeDelayFunc,items:items,processAll:processAll,setallowLoad:setallowLoad,markLoaded:markLoaded,logWhatsBlocked:logWhatsBlocked,};})();__ez.evt.add=function(e,t,n){e.addEventListener?e.addEventListener(t,n,!1):e.attachEvent?e.attachEvent("on"+t,n):e["on"+t]=n()},__ez.evt.remove=function(e,t,n){e.removeEventListener?e.removeEventListener(t,n,!1):e.detachEvent?e.detachEvent("on"+t,n):delete e["on"+t]};__ez.script.add=function(e){var t=document.createElement("script");t.src=e,t.async=!0,t.type="text/javascript",document.getElementsByTagName("head")[0].appendChild(t)};__ez.dot={};__ez.vep=(function(){var pixels=[],pxURL="/detroitchicago/grapefruit.gif";function AddPixel(vID,pixelData){if(__ez.dot.isDefined(vID)&&__ez.dot.isValid(pixelData)){pixels.push({type:'video',video_impression_id:vID,domain_id:__ez.dot.getDID(),t_epoch:__ez.dot.getEpoch(0),data:__ez.dot.dataToStr(pixelData)});}}
+function Fire(){if(typeof document.visibilityState!=='undefined'&&document.visibilityState==="prerender"){return;}
+if(__ez.dot.isDefined(pixels)&&pixels.length>0){while(pixels.length>0){var j=5;if(j>pixels.length){j=pixels.length;}
+var pushPixels=pixels.splice(0,j);var pixelURL=__ez.dot.getURL(pxURL)+"?orig="+(__ez.template.isOrig===true?1:0)+"&v="+btoa(JSON.stringify(pushPixels));__ez.dot.Fire(pixelURL);}}
+pixels=[];}
+return{Add:AddPixel,Fire:Fire};})();</script><script data-ezscrex='false' data-cfasync='false' data-pagespeed-no-defer="">__ez.pel=(function(){var pixels=[],pxURL="/porpoiseant/army.gif";function AddAndFirePixel(adSlot,pixelData){AddPixel(adSlot,pixelData,0,0,0,0,0);Fire();}
+function AddAndFireOrigPixel(adSlot,pixelData){AddPixel(adSlot,pixelData,0,0,0,0,0,true);Fire();}
+function GetCurrentPixels(){return pixels;}
+function AddPixel(adSlot,pixelData,revenue,est_revenue,bid_floor_filled,bid_floor_prev,stat_source_id,isOrig){if(!__ez.dot.isDefined(adSlot)||__ez.dot.isAnyDefined(adSlot.getSlotElementId,adSlot.ElementId)==false){return;}
+if(typeof isOrig==='undefined'){isOrig=false;}
+var ad_position_id=parseInt(__ez.dot.getTargeting(adSlot,'ap'));var impId=__ez.dot.getSlotIID(adSlot),adUnit=__ez.dot.getAdUnit(adSlot,isOrig);var compId=parseInt(__ez.dot.getTargeting(adSlot,"compid"));var lineItemId=0;var creativeId=0;var ezimData=getEzimData(adSlot);if(typeof ezimData=='object'){if(ezimData.creative_id!==undefined){creativeId=ezimData.creative_id;}
+if(ezimData.line_item_id!==undefined){lineItemId=ezimData.line_item_id;}}
+if(__ez.dot.isDefined(impId,adUnit)&&__ez.dot.isValid(pixelData)){if((impId!=="0"||isOrig===true)&&adUnit!==""){pixels.push({type:"impression",impression_id:impId,domain_id:__ez.dot.getDID(),unit:adUnit,t_epoch:__ez.dot.getEpoch(0),revenue:revenue,est_revenue:est_revenue,ad_position:ad_position_id,ad_size:"",bid_floor_filled:bid_floor_filled,bid_floor_prev:bid_floor_prev,stat_source_id:stat_source_id,country_code:__ez.dot.getCC(),pageview_id:__ez.dot.getPageviewId(),comp_id:compId,line_item_id:lineItemId,creative_id:creativeId,data:__ez.dot.dataToStr(pixelData),is_orig:isOrig||__ez.template.isOrig,});}}}
+function AddPixelById(impFullId,pixelData,isOrig,revenue){var vals=impFullId.split('/');if(__ez.dot.isDefined(impFullId)&&vals.length===3&&__ez.dot.isValid(pixelData)){var adUnit=vals[0],impId=vals[2];var pix={type:"impression",impression_id:impId,domain_id:__ez.dot.getDID(),unit:adUnit,t_epoch:__ez.dot.getEpoch(0),pageview_id:__ez.dot.getPageviewId(),data:__ez.dot.dataToStr(pixelData),is_orig:isOrig||__ez.template.isOrig};if(typeof revenue!=='undefined'){pix.revenue=revenue;}
+pixels.push(pix);}}
+function Fire(){if(typeof document.visibilityState!=='undefined'&&document.visibilityState==="prerender")return;if(__ez.dot.isDefined(pixels)&&pixels.length>0){var allPixels=[pixels.filter(function(pixel){return pixel.is_orig}),pixels.filter(function(pixel){return!pixel.is_orig})];allPixels.forEach(function(pixels){while(pixels.length>0){var isOrig=pixels[0].is_orig||false;var j=5;if(j>pixels.length){j=pixels.length;}
+var pushPixels=pixels.splice(0,j);var pixelURL=__ez.dot.getURL(pxURL)+"?orig="+(isOrig===true?1:0)+"&sts="+btoa(JSON.stringify(pushPixels));if(typeof window.isAmp!=='undefined'&&isAmp&&typeof window._ezaq!=='undefined'&&_ezaq.hasOwnProperty("domain_id")){pixelURL+="&visit_uuid="+_ezaq['visit_uuid'];}
+__ez.dot.Fire(pixelURL);}});}
+pixels=[];}
+function getEzimData(adSlot){if(typeof _ezim_d=="undefined"){return false;}
+var adUnitName=__ez.dot.getAdUnitPath(adSlot).split('/').pop();if(typeof _ezim_d==='object'&&_ezim_d.hasOwnProperty(adUnitName)){return _ezim_d[adUnitName];}
+for(var ezimKey in _ezim_d){if(ezimKey.split('/').pop()===adUnitName){return _ezim_d[ezimKey];}}
+return false;}
+return{Add:AddPixel,AddAndFire:AddAndFirePixel,AddAndFireOrig:AddAndFireOrigPixel,AddById:AddPixelById,Fire:Fire,GetPixels:GetCurrentPixels,};})();</script>
+      <!-- basic -->
+      
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <!-- mobile metas -->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+      <!-- site metas -->
+      <title>Blogging</title>
+      <meta name="keywords" content="">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <!-- bootstrap css -->
+      <link rel="stylesheet" href="static/css/bootstrap.min.css">
+      <!-- style css -->
+      <link rel="stylesheet" href="static/css/style.css">
+      <!-- Responsive-->
+      <link rel="stylesheet" href="static/css/responsive.css">
+      <!-- fevicon -->
+
+      <!-- Tweaks for older IEs-->
+      <link rel="stylesheet" href="static/css/owl.carousel.min.css">
+      <link rel="stylesheet" href="static/css/font-awesome.css">
+      <link rel="stylesheet" href="static/css/bootstrap-datepicker.min.css">
+
+   <link rel='canonical' href=''>
+<script type="text/javascript">var ezouid = "1";</script><script type='text/javascript'>
+var ezoTemplate = 'old_site_noads';
+if(typeof ezouid == 'undefined')
+{
+    var ezouid = 'none';
+}
+var ezoFormfactor = '1';
+var ezo_elements_to_check = Array();
+</script><!-- START EZHEAD -->
+<script data-ezscrex="false" type='text/javascript'>
+var soc_app_id = '0';
+var did = 317139;
+var ezdomain = 'html.design';
+var ezoicSearchable = 1;
+</script>
+<!--{jquery}-->
+<!-- END EZHEAD -->
+<script data-ezscrex="false" type="text/javascript" data-cfasync="false">var _ezaq = {"ad_cache_level":0,"ad_lazyload_version":0,"ad_load_version":0,"city":"Aoguan","country":"CN","days_since_last_visit":-1,"domain_id":317139,"engaged_time_visit":0,"ezcache_level":2,"ezcache_skip_code":0,"form_factor_id":1,"framework_id":1,"is_return_visitor":false,"is_sitespeed":0,"last_page_load":"","last_pageview_id":"","lt_cache_level":0,"metro_code":0,"page_ad_positions":"","page_view_count":0,"page_view_id":"c8236828-cf8c-4f2d-4d1f-96a40bf5f89f","position_selection_id":0,"postal_code":"","pv_event_count":0,"response_size_orig":21601,"response_time_orig":3,"serverid":"54.214.122.155:2455","state":"FJ","t_epoch":1652687801,"template_id":120,"time_on_site_visit":0,"url":"#","user_id":0,"weather_precipitation":0,"weather_summary":"","weather_temperature":0,"word_count":472,"worst_bad_word_level":0};var _ezExtraQueries = "&ez_orig=1";</script>
+<script data-ezscrex='false' data-pagespeed-no-defer="" data-cfasync='false'>
+function create_ezolpl(pvID, rv) {
+    var d = new Date();
+    d.setTime(d.getTime() + (365*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    __ez.ck.setByCat("ezux_lpl_317139=" + new Date().getTime() + "|" + pvID + "|" + rv + "; " + expires, 3);
+}
+function attach_ezolpl(pvID, rv) {
+    if (document.readyState === "complete") {
+        create_ezolpl(pvID, rv);
+    }
+    if(window.attachEvent) {
+        window.attachEvent("onload", create_ezolpl, pvID, rv);
+    } else {
+        if(window.onload) {
+            var curronload = window.onload;
+            var newonload = function(evt) {
+                curronload(evt);
+                create_ezolpl(pvID, rv);
+            };
+            window.onload = newonload;
+        } else {
+            window.onload = create_ezolpl.bind(null, pvID, rv);
+        }
+    }
+}
+
+__ez.queue.addFunc("attach_ezolpl", "attach_ezolpl", ["c8236828-cf8c-4f2d-4d1f-96a40bf5f89f", "false"], false, ['/detroitchicago/boise.js'], true, false, false, false);
+</script>
+<script type="text/javascript">var _audins_dom="html_design",_audins_did=317139;__ez.queue.addFile('/detroitchicago/cmbv2.js', '/detroitchicago/cmbv2.js?gcb=195-0&cb=04-1y02-5y06-12y07-1y19-5y0b-5y0d-14y13-3y17-4y1c-2y21-3y2d-2y55-1&cmbcb=67&sj=x04x02x06x07x19x0bx0dx13x17x1cx21x2dx55&abt=BidFloorMethod,BidFloorsubVersion', true, [], true, false, true, false);</script>
+<script type="text/javascript" defer="">__ez.queue.addFile('/detroitchicago/cmbdv2.js', '/detroitchicago/cmbdv2.js?gcb=195-0&cb=03-5y0c-5y18-4&cmbcb=67&sj=x03x0cx18&abt=BidFloorMethod,BidFloorsubVersion', true, ['/detroitchicago/cmbv2.js'], true, false, true, false);</script></head>
+   <!-- body -->
+   <body class="main-layout">
+      <!-- loader  -->
+<!--       <div class="loader_bg">
+         <div class="loader"><img src="static/picture/loading.gif" alt="#"></div>
+      </div>
+ -->      <!-- end loader -->
+    
+         <!-- banner -->
+      <div class="full_bg">
+        <div class="slider_main">
+          <div class="relative">
+            <div class="row d_flex">
+              <div class="col-lg-12">
+                <div class="creative text-center">
+                  <h1>漫长的归程：海外留学生回家有多难？</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end banner -->
+      <!-- perfect -->
+      <div class="perfect">
+         <div class="container_width">
+            <div class="row d_flex grig">
+
+               <div class="col-lg-10 offset-1 order">
+                  <div class="titlepage text_align_left">
+                     <p>美国留学生诗宁在这半年内经历了数不清的崩溃，为了回家，她几乎花光了自己的所有积蓄。和诗宁一样的留学生如今遍布全球各地，无底洞般的金钱成本只是如今海外留学生回国要面临的困境之一，更为艰难的，是蔓延归国全程的不确定性与焦虑，抢票难、等待难、回程难、隔离难，每一步都充满消耗与意外。</p>
+                     <p>归心似箭的留学生们不明白，“回家”这件原本如此简单而单纯的事情，为什么变得这么难？</p>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <h2>抢票难：机票价格一翻再翻</h2>
+                     <p>英国留学生大冯即将毕业，因专业在国外不对口，必须在签证到期前回国找工作。美国留学生诗宁答应过家人和男朋友“一年一定会回来一次”，在国外没有什么朋友，孤单让她的思乡之情更加强烈，她们决定在今年暑假回国。</p>
+                     <p>教育部数据显示,近年来留学热持续升温,并未被新冠疫情打乱。2020年海外留学人数达160万人，尽管疫情阻碍了部分家庭的出国安排,但2021国际教育高峰论坛上发布的《2021年度全国留学报告》调研显示,91%的人仍坚持出国计划。</p>
+                     
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+              <div class="col-lg-8 col-sm-8 col-xs-12 offset-2">
+                  <div class="perfect_img right_span">
+                     <figure><img src="static/picture/abroad_num.jpg" alt="#"></figure>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex grig">
+               <div class="col-lg-10 offset-1 order">
+                  <div class="titlepage text_align_left">
+                     <p>而受全球疫情影响，想要回国的人数增多。智联招聘2021中国海归就业调查报告指出，2020年回国求职的海归总人数同比增长33.9%，其中应届留学生人数猛增67.3%；2021年，在国内求职的海归总人数及应届留学生人数与上年基本持平。</p>
+                     <p>增多的回国人数与疫情影响下航班的减少，造成了回国难的第一步——买不到机票。</p>
+                     <p>2020年3月26日，民航局提出“五个一”政策，即“一个航空公司只能通航一个国家的一个航点，一周只能飞一班”，各留学国家飞往中国的航线急剧减少。据Variflight统计，2019年以后，五个国家回国的航线均急剧减少，美国飞中国的航班数由2019年的2939班降至2022年的239班。</p>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-8 col-sm-8 col-xs-12 offset-2">
+                  <div class="perfect_img">
+                     <figure><img src="static/picture/declined_airline.gif" alt="#"></figure>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <p>供不应求导致机票价格飞涨。大冯感叹道：“机票全在涨价，以前便宜的时候，英国往返机票加起来才5千，现在买基本上都是1万5以上”。 以美国、加拿大、澳大利亚、加拿大为例，截至2022年5月14日，在天巡网和各航空公司官网能买到的回国机票价格几乎都超过了2万元，除新加坡外，未来四个月内，能买到的直飞航班数量寥寥无几，且多数只剩下商务舱、头等舱，美国直飞的票价最高达10万。</p>                     
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+              <div class="col-lg-8 col-sm-8 col-xs-12 offset-2">
+                  <div class="perfect_img right_span">
+                     <figure><img src="static/picture/airline_price.jpg" alt="#"></figure>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <p>诗宁形容自己接受机票价格的过程如同“温水煮青蛙”，不断突破自己的心理底线，“每天接受一点厄运”。去年寒假考虑回国时，美国往返中国的价格3万左右，今年暑假， “回国的成本往返涨到了6万块，直接翻翻了”。</p>
+                     <p>历经两个月的抢票后，1月30日，诗宁找妈妈凑了2万，找男朋友凑了8000元，终于抢到了中国南方航空5月22日飞广州的机票。与她同样，在经历一次机票取消后，大冯最终买到了芬航1万6千元的机票，比之前的机票贵了将近1万元。</p>                     
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <h2>等待难：购买多张机票应对熔断风险</h2>
+                     <p>回国高票价及航线减少的背后是频繁触发的航班熔断。</p>
+                     <p>熔断机制（Circuit Breaker），又叫自动停盘机制，2020年6月4日，民航局发布《民航局关于调整国际客运航班的通知》，指出根据新冠肺炎疫情境外输入防控的需要，对触发熔断条件的航班，依照同一航线航班旅客阳性人数，暂停航线一定周期的运营。</p>
+                     <p>据Airsavvi数据统计，2022年4月全球航班取消率单日最高达57.53%，每日平均取消率为38.61%。以2022年4月1日单日为例，英国、波兰、肯尼亚、荷兰、阿尔及利亚、芬兰、瑞士、澳大利亚、斯里兰卡回国航班取消率100%。同受熔断影响，2021年4月起，各大航空公司陆续取消了中英直飞航班，直到今年3月才陆续恢复，更加剧了回国之难。</p>                     
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+              <div class="col-lg-8 col-sm-8 col-xs-12 offset-2">
+                  <div class="perfect_img right_span">
+                     <figure><img src="static/picture/canceled_airline.jpg" alt="#"></figure>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <p>熔断措施的施行，增大了购买机票的风险，使得已经购买的机票成为了“盲盒”，没人能预测自己购买的航班是否会被熔断，为了保证回国，许多留学生不得不选择购买多张机票，而这大大提升了金钱成本。据德国派PIE账号，德国留学毕业生王传喆的签证即将到期，为了回国，他透支了未来三年的收入，分别花了1万多、3万多和9万多购买了三张机票，前两次航班都被熔断。</p>
+                     <p>已经买到机票的诗宁也陷入了害怕熔断的焦虑中，“每天都特别难受、特别纠结”，在看票、做心理建设、发现票售罄、恐慌的心理循环中煎熬。3月份，再次从妈妈和男朋友那凑齐了2万8，诗宁狠心买下了第二张国航6月14日起飞的机票以防熔断，没等起飞，买两张机票已经花掉了她将近6万元。这之后，她又花费了大量时间，排队给国航打国际长途，试图改签到5月，“打国际长途也算钱，我不断地等，无止境地等，感觉心在滴血”。</p>
+                     <p>诗宁提到，因为很多人选择购买多张机票，如若一架次航班正常起飞，则需要承担其他航班几千元不等的退票费，这也给了机票代买赚钱的商机。</p>
+                     <p>诗宁的一位朋友想要退票，票代除了原有的机票价钱，还会多给8000元，“相当于给他退票费3500，加上额外的4500，你想票代会加多少钱卖出去？如果是临近日期，稳飞卖7、8万肯定有，有的人真的很恨票代，可他买不到票，只能找票代买”。</p>
+                     <p>西班牙票代莫莫透露，5月25日巴塞罗那转阿姆斯特丹再转杭州的机票含税合计57000元，需先支付定金1万。西班牙直飞回国的机票，至少会开出5000欧（合约人民币35700元）的价格，“不设上限”，转机高价机票6万人民币左右，“已经是可以了”。莫莫强调：“如果想要确定回国，最好买近期的，远的容易熔断，这个我们也保证不了”。</p>
+                     <p>购买了芬兰航空机票的大冯，需要从英国中转至赫尔辛基，再飞至上海。担心发生熔断，她持续关注着芬航的政策变化。可事与愿违，上海疫情突然加重，整个4月，欧洲航空公司的上座率下调至40%，5月依然限制上座率，大冯的航班最终被临时取消。“我身边很多人拖着行李到机场，核酸报告都交了，在现场被告知取消，我还知道两次航班因为俄罗斯和乌克兰的战争而取消”，大冯说。</p>                     
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <h2>归程难：数十小时的心力交瘁</h2>
+                     <p>与大冯相比，航班尚未被取消的“幸运儿”们，则需要继续充满风险的漫长归程。</p>
+                     <p>由于直飞航班减少、经济舱票位难抢、节省成本等原因，很大一部分留学生不得不选择购买中转航班，这也意味着暴露在路上时间的延长，以及更为复杂、更高风险的归程准备。以2022年7月25日天巡网能够检索到的美国至中国的全部中转航班为例，归国的转机次数最多可达4次，涉多家航空公司，耗时多在30小时以上，最长可达45小时以上。而这样高的时间成本未必带来更低的时间成本，即尽管留学生费劲周折回国，也未必可以买到最便宜的机票。</p>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+              <div class="col-lg-8 col-sm-8 col-xs-12 offset-2">
+                  <div class="perfect_img right_span">
+                     <figure><img src="static/picture/cost.png" alt="#"></figure>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <p>诗宁对此深有体会，她购买的于5月22日从洛杉矶起飞的航班幸运地没被熔断，2万8的成本之外，她需要从自己所在夏洛茨维尔搭顺风车去华盛顿机场，再从华盛顿机场坐5个多小时的飞机到达洛杉矶机场，“住7天酒店，做3次核酸，1次血清，才能起飞”。</p>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+              <div class="col-lg-8 col-sm-8 col-xs-12 offset-lg-2">
+                  <div class="perfect_img right_span">
+                     <figure><img src="static/picture/requirements.png" alt="#"></figure>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <p>登机前的政策要求，各国各地区要求均不相同。自2022年5月20日起，驻美使馆取消了登机前7天核酸检测，仅保留登记前48小时核酸、前24小时核酸以及前6小时抗原，几乎每一个国家的核酸检测都要求遵循“交叉检测”原则。了解政策并执行，预约合适的核酸采样机构并在规定时间内前往采样，对留学生们而言，亦是难以计数的精力与时间成本。</p>
+                     <p>大冯以英国大使馆举例，3月，英国回国双核酸规定中，最后一次调整为登机前12小时。“12小时内要跑去做核酸，等核酸报告出来，再拖着箱子赶回机场，在起飞前两个小时拿到绿码，英国速度根本无法实现，很多英国核酸检测机构也不被中国大使馆认可。”在此情况下，原本几十磅左右的核酸，被中国企业抓住了商机，价格都要300磅左右，王药师12小时内能出结果的核酸价格甚至一度涨到了450磅（合人民币3807元），后因大众反对，价格才降回350磅左右。</p>
+                     <p>回程途中，意外也难以预测。据公众号“陈航说留美”记录，华盛顿留学生小S两次机票被取消后，刷到了一张从巴黎飞北京的机票，她从华盛顿先飞了亚特兰大，准备转机前往巴黎，在飞机即将降落时遭遇雷暴，亚特兰大机场关闭，飞机迫降到其他机场，小S错过了前往巴黎的飞机，只好在亚特兰大暂时住下，后来通过票代才买到两天后从阿姆斯特丹回广州的机票，回国全程历时80多个小时。整个归国的过程，留学生们还需要打起12分精神保护自己，以免在行前或途中感染新冠。</p>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <h2>隔离难：天数、条件不定，面临感染风险</h2>
+                     <p>顺利落地后，回国的旅程并未画上句号，留学生们仍需面临漫长的隔离。据日本留学生小榕介绍，出了机场之后，去哪家国内酒店隔离也是抽盲盒，“这辆大巴去哪个酒店都不告诉你，就看你的运气，有的酒店很好，有的就很烂”。</p>
+                     <p>小榕介绍道，国外回国的飞机降落点很少，北京机场已经不再接收境外航班，可以选择的落地城市仅仅局限于西安、广州、上海等零星几个。而目前国内各地的隔离政策均不相同，留学生只能在有限的预算和可能性之下选择。集中隔离之后，回到家乡的留学生还需要经受老家的二次隔离。</p>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+              <div class="col-lg-8 col-sm-8 col-xs-12 offset-2">
+                  <div class="perfect_img right_span">
+                     <figure><img src="static/picture/seperate_time.jpg" alt="#"></figure>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <p>目前，落地后最长的隔离时间达到了56天，沈阳市规定，境外返乡人员在进行28天宾馆集中隔离后，仍需进行28天健康监测，并进行6次核酸检测。绝大多数省市的隔离政策，都达到了28天及以上。小榕落地西安后，集中隔离了14天，“酒店一天300，饭钱100，再加上核酸费用，一共花了差不多8000块”，这之后，他又回到老家太原居家隔离了14天。隔离结束，看到自己拥有绿码的那一刻，小榕感到自己“从未如此渴望绿色”。</p>
+                     <p>小横则没有那么幸运，从荷兰落地厦门后，期待回到北京的他被告知确诊新冠，被转送到了医院。“在医院住了12天后，我转阴了，之后又连续做了两次核酸，终于算是康复了”，康复后，小横再次被转送到康复者酒店，在隔离33天之后，健康宝转绿。同样隔离过14天的加拿大留学生Ben也讲道，自己隔离期间的心情并不好，“总有胸闷烦躁的情况，应该就是太想与人接触了”。</p>
+                     <p>而那些仍在海外等待回家的留学生们，无暇考虑回国后的一系列隔离政策和开销，他们只渴望一场顺利的抵达。</p>
+                     <p>诗宁形容自己准备回国的历程如同经历了“九九八十一难”，焦虑和早起看票成为了她生活的常态。为了省钱，诗宁戒掉了原本一周点一次奶茶的习惯，“能少吃就少吃，就为了回国攒钱，我几乎没怎么运动，一份肉分成两份吃，瘦了15斤”。她认为回国的留学生们“同病相连”，“当看到网上有人说你不要回来时，不欢迎我回家时，我真的特别沮丧。没人在乎你开不开心，健不健康，一个回国的中国人就是在夹缝里生存”。</p>
+                     <p>此时仍在英国计划买票的大冯也提到，“我时常会陷入焦虑，很难真正享受这宝贵的留学时光，留学体验感大大降低”。面临着毕业回国找工作的她，现在只希望能在7月顺利落地祖国。</p>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <p>（应受访者要求，大冯、小榕、小衡、莫莫为化名，感谢Airsavvi提供的数据支持以及唐德清师兄的帮助）</p>
+                  </div>
+               </div>
+            </div>
+            <div class="row d_flex">
+               <div class="col-lg-10 offset-1">
+                  <div class="titlepage flot_right text_align_left">
+                     <h3>参考文献：</h3>
+                     <ul>
+                       <li>
+                        <a href="https://mp.weixin.qq.com/s/Yu1Co0ogSOzN1Ejj8Ldjew">[1]故事硬核：归国留学生的2021：绿码、熔断与阴阳人</a>
+                       </li>
+                       <li>
+                        <a href="https://mp.weixin.qq.com/s/aUk9ayjRrjI3iFy5W9RJ7g">[2]谷雨数据：打满疫情全场，66万中国留学生去留两难</a>
+                       </li>
+                       <li>
+                        <a href="https://www.xiaohongshu.com/discovery/item/626303f4000000002103d8e5?secondshare=weixin&share_from_user_hidden=true">[3]德国PIE：为了回国，我透支了未来三年的收入</a>
+                       </li>
+                       <li>
+                        <a href="https://mp.weixin.qq.com/s/WO9tiIY8TgPd--2QoL0HTA">[4]陈航说留美：倾听到我们的声音：美国留学生回国历险记</a>
+                       </li>
+                       <li>
+                        <a href="https://mp.weixin.qq.com/s/BYTqRSzAUJs1R7CRpIP3uQ">[5]澳网：留学生现状：海外待不下，回国更难混！</a>
+                       </li>
+                     </ul>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- end perfect -->
+
+
+      <!--  footer -->
+      <footer>
+         <div class="footer">
+            <div class="container">
+               <div class="row">
+                  <div class="col-md-8 offset-2">
+                     <div class="hedingh3  text_align_center">
+                        <ul class="top_infomation">
+                           <li>
+                              数据和资料：杨梓岩 李彤 谢雨竹 王若凡 谢鲁博
+                           </li>
+                             <li>采访：李彤 谢雨竹 王若凡 杨梓岩
+                           </li>
+                           <li>可视化： 谢鲁博 谢雨竹 王若凡 杨梓岩
+                           </li>
+                           <li>文案：李彤
+                           </li>
+                           <li>美编：王若凡
+                           </li>
+                           <li>指导老师：方洁
+                           </li>
+                           <li>联系电邮：1260723060@qq.com
+                           </li>
+                           <li>中国人民大学数据新闻与数据可视化课程出品
+                           </li>
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </footer>
+      <!-- end footer -->
+      <!-- Javascript files-->
+      <script data-cfasync="false" src="static/js/email-decode.min.js"></script><script src="static/js/jquery.min.js"></script>
+      <script src="static/js/bootstrap.bundle.min.js"></script>
+      <script src="static/js/jquery-3.0.0.min.js"></script>
+      <script src="static/js/owl.carousel.min.js"></script>
+      <script src="static/js/bootstrap-datepicker.min.js"></script>
+      <script src="static/js/custom.js"></script>
+   
+<script type='text/javascript' style='display:none;' async="">
+</script>
+
+<script type="text/javascript" data-cfasync="false"></script></body></html>
